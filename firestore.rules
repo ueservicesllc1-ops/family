@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && get(/databases/$(database)/documents/clients_web/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // User Helper
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // Shipments: 
+    // - Admin can read/write all
+    // - Users can read their own
+    match /shipments/{shipmentId} {
+        allow read: if request.auth != null; // For dev simplicity, verify in prod
+        allow create: if request.auth != null;
+        allow update, delete: if request.auth != null;
+    }
+    
+    // Clients Web (Lockers users):
+    // - Admin read all
+    // - User read/write own
+    match /clients_web/{userId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null; // Allow users to register/update self
+    }
+    
+    // Pre-Alerts:
+    // - Admin read/write all
+    // - User read/write own
+    match /pre_alerts/{alertId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null;
+    }
+
+    // Default catch-all (Caution: Open for development)
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

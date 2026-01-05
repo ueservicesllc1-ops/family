@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de gestión de envíos Family Express - USA a Ecuador">
+  <title>Family Express - Sistema de Gestión de Envíos</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles/styles.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+</head>
+<body>
+  
+  <!-- Login Screen -->
+  <div id="login-screen">
+    <div class="login-container">
+      <div class="login-logo">📦</div>
+      <h1>Family Express</h1>
+      <p>Sistema de Gestión de Envíos USA → Ecuador</p>
+      <button id="google-login-btn" class="btn btn-primary btn-lg">
+        <span>🔐</span>
+        Iniciar sesión con Google
+      </button>
+    </div>
+  </div>
+
+  <!-- App Container -->
+  <div id="app-container">
+    <div class="app-layout">
+      
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-icon">📦</div>
+          <div class="logo-text">
+            <h2>Family Express</h2>
+            <p>Gestión de Envíos</p>
+          </div>
+        </div>
+
+        <nav class="nav-menu">
+          <div class="nav-item active" data-page="dashboard">
+            <span class="nav-item-icon">📊</span>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-item" data-page="clients">
+            <span class="nav-item-icon">👥</span>
+            <span>Clientes</span>
+          </div>
+          <div class="nav-item" data-page="shipments">
+            <span class="nav-item-icon">📦</span>
+            <span>Envíos</span>
+          </div>
+          <div class="nav-item" data-page="tracking">
+            <span class="nav-item-icon">🔍</span>
+            <span>Rastreo</span>
+          </div>
+          <div class="nav-item" data-page="reports">
+            <span class="nav-item-icon">📈</span>
+            <span>Reportes</span>
+          </div>
+        </nav>
+
+        <div class="user-profile">
+          <img id="user-photo" src="" alt="User" class="user-avatar" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👤</text></svg>'">
+          <div class="user-info">
+            <h4 id="user-name">Usuario</h4>
+            <p id="user-email">email@example.com</p>
+          </div>
+        </div>
+
+        <button id="logout-btn" class="btn btn-secondary" style="width: 100%;">
+          <span>🚪</span>
+          Cerrar Sesión
+        </button>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page active">
+          <div class="page-header">
+            <div class="page-title">
+              <h1>Dashboard</h1>
+              <p>Vista general del sistema de envíos</p>
+            </div>
+          </div>
+
+          <div class="stats-grid" id="stats-grid">
+            <!-- Stats will be populated by JavaScript -->
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Envíos Recientes</h3>
+            </div>
+            <div id="recent-shipments">
+              <!-- Recent shipments will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Clients Page -->
+        <div id="clients-page" class="page hidden">
+          <div class="page-header">
+            <div class="page-title">
+              <h1>Clientes</h1>
+              <p>Gestión de clientes y registro consular</p>
+            </div>
+            <button id="add-client-btn" class="btn btn-primary">
+              <span>➕</span>
+              Nuevo Cliente
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="form-group">
+              <input type="text" id="client-search" class="form-input" placeholder="Buscar clientes por nombre, teléfono, email o ID...">
+            </div>
+
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th>Categoría</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="clients-table-body">
+                  <!-- Clients will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipments Page -->
+        <div id="shipments-page" class="page hidden">
+          <div class="page-header">
+            <div class="page-title">
+              <h1>Envíos</h1>
+              <p>Gestión de paquetes y envíos</p>
+            </div>
+            <button id="add-shipment-btn" class="btn btn-primary">
+              <span>➕</span>
+              Nuevo Envío
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="flex gap-2 mb-3">
+              <select id="shipment-status-filter" class="form-select" style="max-width: 200px;">
+                <option value="">Todos los estados</option>
+                <option value="pending">Pendiente</option>
+                <option value="in_transit">En tránsito</option>
+                <option value="delivered">Entregado</option>
+                <option value="cancelled">Cancelado</option>
+              </select>
+            </div>
+
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Cliente</th>
+                    <th>Categoría</th>
+                    <th>Valor</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="shipments-table-body">
+                  <!-- Shipments will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tracking Page -->
+        <div id="tracking-page" class="page hidden">
+          <div class="page-header">
+            <div class="page-title">
+              <h1>Rastreo de Paquetes</h1>
+              <p>Consulta el estado de tu envío</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="form-group">
+              <label class="form-label">Código de Rastreo</label>
+              <div class="flex gap-2">
+                <input type="text" id="tracking-search" class="form-input" placeholder="Ej: FE-20241224-0001">
+                <button id="tracking-search-btn" class="btn btn-primary">Buscar</button>
+              </div>
+            </div>
+
+            <div id="tracking-results" class="hidden">
+              <!-- Tracking results will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="reports-page" class="page hidden">
+          <div class="page-header">
+            <div class="page-title">
+              <h1>Reportes</h1>
+              <p>Informes y estadísticas del negocio</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="form-group">
+              <label class="form-label">Período</label>
+              <div class="flex gap-2">
+                <input type="date" id="report-start-date" class="form-input">
+                <input type="date" id="report-end-date" class="form-input">
+                <button id="generate-report-btn" class="btn btn-primary">Generar Reporte</button>
+              </div>
+            </div>
+
+            <div id="report-results">
+              <!-- Report results will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Client Modal -->
+  <div id="client-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="client-modal-title">Nuevo Cliente</h3>
+        <button class="modal-close" onclick="closeModal('client-modal')">✕</button>
+      </div>
+
+      <form id="client-form">
+        <div class="form-group">
+          <label class="form-label required">Nombre Completo</label>
+          <input type="text" id="client-fullname" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Teléfono</label>
+          <input type="tel" id="client-phone" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="client-email" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Dirección en Ecuador</label>
+          <textarea id="client-address" class="form-textarea" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Número de Identificación</label>
+          <input type="text" id="client-idnumber" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Categoría</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="client-category" value="B" checked>
+              Categoría B (Sin registro consular)
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="client-category" value="G">
+              Categoría G (Con registro consular)
+            </label>
+          </div>
+        </div>
+
+        <div id="consular-section" class="hidden">
+          <div class="form-group">
+            <label class="form-label required">Número de Registro Consular</label>
+            <input type="text" id="client-registration" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Foto/Documento (Opcional)</label>
+          <input type="file" id="client-photo" class="form-input" accept="image/*">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('client-modal')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <span class="spinner hidden" id="client-submit-spinner"></span>
+            <span id="client-submit-text">Guardar Cliente</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Shipment Modal -->
+  <div id="shipment-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Nuevo Envío</h3>
+        <button class="modal-close" onclick="closeModal('shipment-modal')">✕</button>
+      </div>
+
+      <form id="shipment-form">
+        <div class="form-group">
+          <label class="form-label required">Cliente</label>
+          <select id="shipment-client" class="form-select" required>
+            <option value="">Seleccione un cliente...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Contenido del Paquete</label>
+          <div class="checkbox-group" id="package-items">
+            <!-- Items will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Valor Declarado (USD)</label>
+          <input type="number" id="shipment-value" class="form-input" step="0.01" min="0" max="400" required>
+          <small style="color: var(--text-muted);">Máximo: $400 USD</small>
+        </div>
+
+        <div id="cost-breakdown-container" class="hidden mt-3">
+          <!-- Cost breakdown will be populated by JavaScript -->
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('shipment-modal')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <span class="spinner hidden" id="shipment-submit-spinner"></span>
+            <span id="shipment-submit-text">Crear Envío</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Shipment Detail Modal -->
+  <div id="shipment-detail-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Detalles del Envío</h3>
+        <button class="modal-close" onclick="closeModal('shipment-detail-modal')">✕</button>
+      </div>
+
+      <div id="shipment-detail-content">
+        <!-- Shipment details will be populated by JavaScript -->
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('shipment-detail-modal')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App JavaScript -->
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
