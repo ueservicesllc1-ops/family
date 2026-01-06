@@ -36,6 +36,23 @@ service cloud.firestore {
         allow write: if request.auth != null;
     }
 
+    // Public Content (Landing Page)
+    match /banners/{bannerId} {
+        allow read: if true;
+        allow write: if request.auth != null; // Admin only ideally
+    }
+    
+    match /marquee_messages/{msgId} {
+        allow read: if true;
+        allow write: if request.auth != null;
+    }
+
+    // Contact Messages (Public can create, Admin reads)
+    match /contact_messages/{msgId} {
+        allow create: if true;
+        allow read, update, delete: if request.auth != null;
+    }
+
     // Default catch-all (Caution: Open for development)
     match /{document=**} {
       allow read, write: if request.auth != null;
