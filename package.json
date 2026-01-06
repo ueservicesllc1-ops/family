@@ -4,7 +4,7 @@
   "description": "Sistema de gestión de envíos Family Express - USA a Ecuador",
   "main": "electron.js",
   "scripts": {
-    "start": "npx serve -l ${PORT:-3000} .",
+    "start": "npx serve .",
     "dev": "npx serve . -p 3000",
     "build": "echo 'Web app ready for production'",
     "electron": "electron ."
