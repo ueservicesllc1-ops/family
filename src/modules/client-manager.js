@@ -1,5 +1,5 @@
 // Client Manager Module - UPDATED WITH FAMILY MEMBERS MANAGEMENT
-import { db, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, orderBy, Timestamp } from '../config/firebase-config.js';
+import { db, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, orderBy, Timestamp, storage, ref, uploadBytes, getDownloadURL } from '../config/firebase-config.js';
 import { uploadToB2, deleteFromB2 } from '../config/b2-config.js';
 
 class ClientManager {
@@ -13,9 +13,15 @@ class ClientManager {
         try {
             let photoUrl = '';
 
-            // Upload photo to B2 if provided
+            // Upload photo to Firebase Storage if provided
             if (photoFile) {
-                photoUrl = await uploadToB2(photoFile, `client-${Date.now()}-${photoFile.name}`);
+                try {
+                    const storageRef = ref(storage, `clients/${Date.now()}_${photoFile.name}`);
+                    const snapshot = await uploadBytes(storageRef, photoFile);
+                    photoUrl = await getDownloadURL(snapshot.ref);
+                } catch (e) {
+                    console.error("Error uploading client photo:", e);
+                }
             }
 
             const client = {
@@ -47,16 +53,48 @@ class ClientManager {
     }
 
     // Add family member to client
-    async addFamilyMember(clientId, familyMemberData) {
+    async addFamilyMember(clientId, familyMemberData, photos = {}) {
         try {
-            const clientRef = doc(db, 'clients', clientId);
-            const clientDoc = await getDoc(clientRef);
+            // Check Admin collection
+            let clientRef = doc(db, 'clients', clientId);
+            let clientDoc = await getDoc(clientRef);
+
+            if (!clientDoc.exists()) {
+                // Check Web collection
+                clientRef = doc(db, 'clients_web', clientId);
+                clientDoc = await getDoc(clientRef);
+            }
 
             if (!clientDoc.exists()) {
                 throw new Error('Client not found');
             }
 
             const client = clientDoc.data();
+
+            let photoUrlFront = '';
+            let photoUrlBack = '';
+
+            // Upload Front
+            if (photos.front) {
+                try {
+                    const storageRef = ref(storage, `family_photos/${clientId}/${Date.now()}_front_${photos.front.name}`);
+                    const snapshot = await uploadBytes(storageRef, photos.front);
+                    photoUrlFront = await getDownloadURL(snapshot.ref);
+                } catch (err) {
+                    console.error('Error uploading front photo:', err);
+                }
+            }
+
+            // Upload Back
+            if (photos.back) {
+                try {
+                    const storageRef = ref(storage, `family_photos/${clientId}/${Date.now()}_back_${photos.back.name}`);
+                    const snapshot = await uploadBytes(storageRef, photos.back);
+                    photoUrlBack = await getDownloadURL(snapshot.ref);
+                } catch (err) {
+                    console.error('Error uploading back photo:', err);
+                }
+            }
 
             // Create family member with unique ID
             const familyMember = {
@@ -68,21 +106,36 @@ class ClientManager {
                 address: familyMemberData.address,
                 city: familyMemberData.city,
                 province: familyMemberData.province,
+                photoUrlFront: photoUrlFront,
+                photoUrlBack: photoUrlBack,
+                // Legacy field for backward compat if any code used it, though we just added it.
+                // We'll trust front as the main one if someone asks for a single photo.
+                photoUrl: photoUrlFront,
                 createdAt: Timestamp.now()
             };
 
             // Add to family members array
-            const familyMembers = client.consularRegistration?.familyMembers || [];
+            // Ensure consularRegistration exists (it might not in web clients)
+            let consularRegistration = client.consularRegistration;
+            if (!consularRegistration) {
+                consularRegistration = { familyMembers: [], hasRegistration: false, registrationNumber: '' };
+            }
+
+            const familyMembers = consularRegistration.familyMembers || [];
             familyMembers.push(familyMember);
 
+            // Re-assign in case struct was missing
+            consularRegistration.familyMembers = familyMembers;
+
             await updateDoc(clientRef, {
-                'consularRegistration.familyMembers': familyMembers,
+                'consularRegistration': consularRegistration,
                 updatedAt: Timestamp.now()
             });
 
             // Update local cache
             const index = this.clients.findIndex(c => c.id === clientId);
             if (index !== -1) {
+                if (!this.clients[index].consularRegistration) this.clients[index].consularRegistration = {};
                 this.clients[index].consularRegistration.familyMembers = familyMembers;
             }
 
@@ -96,8 +149,15 @@ class ClientManager {
     // Remove family member from client
     async removeFamilyMember(clientId, familyMemberId) {
         try {
-            const clientRef = doc(db, 'clients', clientId);
-            const clientDoc = await getDoc(clientRef);
+            // Check Admin collection
+            let clientRef = doc(db, 'clients', clientId);
+            let clientDoc = await getDoc(clientRef);
+
+            if (!clientDoc.exists()) {
+                // Check Web collection
+                clientRef = doc(db, 'clients_web', clientId);
+                clientDoc = await getDoc(clientRef);
+            }
 
             if (!clientDoc.exists()) {
                 throw new Error('Client not found');
@@ -107,14 +167,19 @@ class ClientManager {
             const familyMembers = (client.consularRegistration?.familyMembers || [])
                 .filter(fm => fm.id !== familyMemberId);
 
+            // Re-construct logic to be safe for web clients updates
+            let consularRegistration = client.consularRegistration || { familyMembers: [], hasRegistration: false, registrationNumber: '' };
+            consularRegistration.familyMembers = familyMembers;
+
             await updateDoc(clientRef, {
-                'consularRegistration.familyMembers': familyMembers,
+                'consularRegistration': consularRegistration,
                 updatedAt: Timestamp.now()
             });
 
             // Update local cache
             const index = this.clients.findIndex(c => c.id === clientId);
             if (index !== -1) {
+                if (!this.clients[index].consularRegistration) this.clients[index].consularRegistration = {};
                 this.clients[index].consularRegistration.familyMembers = familyMembers;
             }
 
@@ -134,8 +199,17 @@ class ClientManager {
     // Update client
     async updateClient(clientId, updates, photoFile = null) {
         try {
-            const clientRef = doc(db, 'clients', clientId);
-            const clientDoc = await getDoc(clientRef);
+            // Check Admin collection
+            let collectionName = 'clients';
+            let clientRef = doc(db, 'clients', clientId);
+            let clientDoc = await getDoc(clientRef);
+
+            if (!clientDoc.exists()) {
+                // Check Web collection
+                clientRef = doc(db, 'clients_web', clientId);
+                clientDoc = await getDoc(clientRef);
+                collectionName = 'clients_web';
+            }
 
             if (!clientDoc.exists()) {
                 throw new Error('Client not found');
@@ -145,11 +219,16 @@ class ClientManager {
 
             // Upload new photo if provided
             if (photoFile) {
-                // Delete old photo if exists
-                if (photoUrl) {
-                    await deleteFromB2(photoUrl);
+                // TODO: Delete old photo if exists (needs to check if it's B2 or Firebase)
+                /* if (photoUrl) { await deleteFromB2(photoUrl); } */
+
+                try {
+                    const storageRef = ref(storage, `clients/${clientId}/${Date.now()}_${photoFile.name}`);
+                    const snapshot = await uploadBytes(storageRef, photoFile);
+                    photoUrl = await getDownloadURL(snapshot.ref);
+                } catch (e) {
+                    console.error("Error uploading new client photo:", e);
                 }
-                photoUrl = await uploadToB2(photoFile, `client-${Date.now()}-${photoFile.name}`);
             }
 
             const updatedData = {
@@ -163,7 +242,13 @@ class ClientManager {
             // Update local cache
             const index = this.clients.findIndex(c => c.id === clientId);
             if (index !== -1) {
-                this.clients[index] = { ...this.clients[index], ...updatedData, id: clientId };
+                // Preserve source and other fields not in updates
+                this.clients[index] = {
+                    ...this.clients[index],
+                    ...updatedData,
+                    id: clientId,
+                    source: collectionName === 'clients' ? 'admin' : 'web'
+                };
             }
 
             return { id: clientId, ...updatedData };
@@ -200,15 +285,47 @@ class ClientManager {
         }
     }
 
-    // Get all clients
+    // Get all clients (Unified: Admin 'clients' + Web 'clients_web')
     async getAllClients() {
         try {
-            const q = query(collection(db, 'clients'), orderBy('createdAt', 'desc'));
-            const snapshot = await getDocs(q);
-
             this.clients = [];
-            snapshot.forEach(doc => {
-                this.clients.push({ id: doc.id, ...doc.data() });
+
+            // 1. Fetch Admin Clients
+            const q1 = query(collection(db, 'clients'), orderBy('createdAt', 'desc'));
+            const snap1 = await getDocs(q1);
+            snap1.forEach(doc => {
+                this.clients.push({ id: doc.id, source: 'admin', ...doc.data() });
+            });
+
+            // 2. Fetch Web Clients
+            const q2 = query(collection(db, 'clients_web'), orderBy('createdAt', 'desc'));
+            const snap2 = await getDocs(q2);
+            snap2.forEach(doc => {
+                const data = doc.data();
+                // Map web fields to client schema if needed
+                this.clients.push({
+                    id: doc.id,
+                    source: 'web',
+                    fullName: data.fullName,
+                    email: data.email,
+                    phone: data.phone || '',
+                    address: data.address || '',
+                    city: data.city || '',
+                    province: data.province || '',
+                    idNumber: data.idNumber || '', // Might be missing
+                    category: data.category || 'B', // Use stored category or default
+                    suiteId: data.suiteId,
+                    photoUrl: data.photoUrl,
+                    consularRegistration: data.consularRegistration || { familyMembers: [] }, // Use stored struct or default
+                    createdAt: data.createdAt
+                });
+            });
+
+            // Sort merged list by date (newest first)
+            this.clients.sort((a, b) => {
+                const tA = a.createdAt?.seconds || 0;
+                const tB = b.createdAt?.seconds || 0;
+                return tB - tA;
             });
 
             return this.clients;
@@ -221,11 +338,35 @@ class ClientManager {
     // Get client by ID
     async getClientById(clientId) {
         try {
-            const clientRef = doc(db, 'clients', clientId);
-            const clientDoc = await getDoc(clientRef);
+            // Try Admin collection first
+            let clientRef = doc(db, 'clients', clientId);
+            let clientDoc = await getDoc(clientRef);
 
             if (clientDoc.exists()) {
-                return { id: clientDoc.id, ...clientDoc.data() };
+                return { id: clientDoc.id, source: 'admin', ...clientDoc.data() };
+            }
+
+            // Try Web collection
+            clientRef = doc(db, 'clients_web', clientId);
+            clientDoc = await getDoc(clientRef);
+
+            if (clientDoc.exists()) {
+                const data = clientDoc.data();
+                return {
+                    id: clientDoc.id,
+                    source: 'web',
+                    fullName: data.fullName,
+                    email: data.email,
+                    phone: data.phone || '',
+                    address: data.address || '',
+                    city: data.city || '',
+                    province: data.province || '',
+                    idNumber: data.idNumber || '',
+                    category: data.category || 'B',
+                    suiteId: data.suiteId,
+                    photoUrl: data.photoUrl,
+                    consularRegistration: data.consularRegistration || { familyMembers: [] }
+                };
             }
 
             return null;

@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Diseño - Family Express</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="icon" href="../images/favicon.png">
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 70px;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+        }
+
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .sidebar-logo {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-nav {
+            padding: 1.5rem 1rem;
+            flex: 1;
+        }
+
+        .nav-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.2s;
+            text-align: left;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .nav-btn:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .nav-btn.active {
+            background: rgba(99, 102, 241, 0.1);
+            /* Primary light style */
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        /* Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.5rem;
+        }
+
+        .input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Image Upload */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: #f0f9ff;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .upload-hint {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        /* Preview Grid */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fa-solid fa-shapes"></i> Admin Diseño
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" onclick="showSection('banners', this)">
+                    <i class="fa-regular fa-images nav-icon"></i>
+                    Banners
+                </button>
+                <button class="nav-btn" onclick="showSection('config', this)">
+                    <i class="fa-solid fa-sliders nav-icon"></i>
+                    Configuración
+                </button>
+                <button class="nav-btn" onclick="showSection('social', this)">
+                    <i class="fa-solid fa-share-nodes nav-icon"></i>
+                    Redes Sociales
+                </button>
+                <button class="nav-btn" onclick="showSection('rates', this)">
+                    <i class="fa-solid fa-tags nav-icon"></i>
+                    Tarifas
+                </button>
+                <button class="nav-btn" onclick="showSection('promos', this)">
+                    <i class="fa-solid fa-bullhorn nav-icon"></i>
+                    Promociones
+                </button>
+                <button class="nav-btn" onclick="showSection('marquee', this)">
+                    <i class="fa-solid fa-scroll nav-icon"></i>
+                    Marquesina
+                </button>
+
+                <div style="margin-top: auto; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
+                    <a href="../index.html" class="nav-btn">
+                        <i class="fa-solid fa-arrow-left nav-icon"></i>
+                        Ver Sitio Web
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Banners Section -->
+            <section id="banners" class="content-section active">
+                <div class="page-header">
+                    <h1 class="page-title">Banners del Carrusel</h1>
+                    <p class="page-subtitle">Gestiona las imágenes principales que ven tus clientes.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Subir Nuevo Banner</h3>
+                    </div>
+
+                    <div class="upload-area" onclick="document.getElementById('banner-upload').click()">
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <h4 class="upload-text">Haz click o arrastra una imagen aquí</h4>
+                        <span class="upload-hint">Tamaño recomendado: 1920x600 px (Formatos: JPG, PNG, WEBP)</span>
+                        <input type="file" id="banner-upload" hidden accept="image/*">
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <h4 class="label">Vista Previa y Textos</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="label">Título Principal</label>
+                                <input type="text" class="input" placeholder="Ej: Envíos Rápidos a Ecuador">
+                            </div>
+                            <div class="form-group">
+                                <label class="label">Subtítulo</label>
+                                <input type="text" class="input" placeholder="Ej: La mejor tarifa del mercado">
+                            </div>
+                            <div class="form-group">
+                                <label class="label">Texto del Botón</label>
+                                <input type="text" class="input" placeholder="Ej: Regístrate Gratis">
+                            </div>
+                            <div class="form-group">
+                                <label class="label">Enlace del Botón</label>
+                                <input type="text" class="input" placeholder="Ej: #registro">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">Guardar Banner</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Banners Activos</h3>
+                    </div>
+                    <div class="preview-grid">
+                        <!-- Demo Item -->
+                        <div class="preview-item">
+                            <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec" class="preview-img"
+                                alt="Banner 1">
+                            <div class="preview-actions">
+                                <button class="action-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <!-- Demo Item -->
+                        <div class="preview-item">
+                            <img src="https://images.unsplash.com/photo-1566576912906-253c7235a901" class="preview-img"
+                                alt="Banner 2">
+                            <div class="preview-actions">
+                                <button class="action-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Config Section -->
+            <section id="config" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Datos de Contacto</h1>
+                    <p class="page-subtitle">Actualiza la información visible en el pie de página y contacto.</p>
+                </div>
+
+                <div class="card">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="label">Email de Soporte</label>
+                            <input type="email" class="input" value="info@familyexpress.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Teléfono / WhatsApp</label>
+                            <input type="text" class="input" value="+1 (305) 555-0123">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Dirección Principal (Miami)</label>
+                            <input type="text" class="input" value="1350 NW 121st Ave, Miami, FL 33182">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Horario de Atención</label>
+                            <input type="text" class="input" value="Lunes a Viernes 9am - 6pm">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </section>
+
+            <!-- Social Section -->
+            <section id="social" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Redes Sociales</h1>
+                    <p class="page-subtitle">Gestiona los enlaces a tus perfiles sociales.</p>
+                </div>
+
+                <div class="card">
+                    <div class="form-group">
+                        <label class="label"><i class="fa-brands fa-facebook text-blue-600"></i> Facebook URL</label>
+                        <input type="text" class="input" placeholder="https://facebook.com/..."
+                            value="https://facebook.com/familyexpress">
+                    </div>
+                    <div class="form-group">
+                        <label class="label"><i class="fa-brands fa-instagram text-pink-600"></i> Instagram URL</label>
+                        <input type="text" class="input" placeholder="https://instagram.com/..."
+                            value="https://instagram.com/familyexpress">
+                    </div>
+                    <div class="form-group">
+                        <label class="label"><i class="fa-brands fa-tiktok text-black"></i> TikTok URL</label>
+                        <input type="text" class="input" placeholder="https://tiktok.com/...">
+                    </div>
+                    <button class="btn btn-primary">Actualizar Redes</button>
+                </div>
+            </section>
+
+            <!-- Rates Section -->
+            <section id="rates" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Gestión de Tarifas</h1>
+                    <p class="page-subtitle">Actualiza los precios y características de tus servicios.</p>
+                </div>
+
+                <!-- Tarifa 4x4 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Tarifa Categoría B (4x4)</h3>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="label">Precio ($)</label>
+                            <input type="number" class="input" value="25.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Descripción Corta</label>
+                            <input type="text" class="input" value="Uso Personal">
+                        </div>
+                    </div>
+
+                    <label class="label mt-2">Características (Una por línea)</label>
+                    <textarea class="input" rows="4">Hasta 8.5 libras (4kg)
+Hasta $400 valor
+Entrega a domicilio
+Sin impuestos adicionales*</textarea>
+
+                    <button class="btn btn-primary mt-2">Guardar Tarifa B</button>
+                </div>
+
+                <!-- Tarifa Categoría C -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Tarifa Categoría C (Comercial)</h3>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="label">Precio por Libra ($)</label>
+                            <input type="number" class="input" value="4.50">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Descripción Corta</label>
+                            <input type="text" class="input" value="Emprendedores">
+                        </div>
+                    </div>
+
+                    <label class="label mt-2">Características (Una por línea)</label>
+                    <textarea class="input" rows="4">Peso ilimitado
+Ideal para ropa y zapatos
+Asesoría aduanera
+Requiere impuestos</textarea>
+
+                    <button class="btn btn-primary mt-2">Guardar Tarifa C</button>
+                </div>
+            </section>
+
+            <!-- Promotions Section -->
+            <section id="promos" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Promociones Pop-up</h1>
+                    <p class="page-subtitle">Configura ventanas emergentes publicitarias al entrar a la web.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Pop-up Principal</h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold text-gray-500">Activar:</span>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="label">Imagen del Pop-up</label>
+                            <div class="upload-area" style="padding: 2rem;">
+                                <i class="fa-solid fa-image upload-icon" style="font-size: 2rem;"></i>
+                                <div class="upload-text">Subir Imagen Promocional</div>
+                                <span class="upload-hint">Tamaño recomendado: 800x600 px o 600x800 px</span>
+                                <input type="file" hidden>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Duración / Frecuencia</label>
+                            <select class="input">
+                                <option>Mostrar 1 vez por sesión</option>
+                                <option>Mostrar siempre</option>
+                                <option>Mostrar 1 vez por día</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Enlace de Destino (Opcional)</label>
+                            <input type="text" class="input" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary">Guardar Promoción</button>
+                </div>
+            </section>
+
+            <!-- Marquee Section -->
+            <section id="marquee" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Textos de la Marquesina</h1>
+                    <p class="page-subtitle">Gestiona los mensajes que aparecen en la barra azul debajo del banner.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Agregar Nuevo Mensaje</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Texto del Mensaje</label>
+                        <textarea id="marquee-text-input" class="input" rows="2"
+                            placeholder="Ej: Oferta especial en envíos..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Icono (Clase FontAwesome)</label>
+                        <input id="marquee-icon-input" type="text" class="input" value="fa-solid fa-bullhorn"
+                            placeholder="fa-solid fa-bullhorn">
+                    </div>
+                    <button id="save-marquee-btn" class="btn btn-primary">Agregar Mensaje</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Mensajes Activos</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Texto</th>
+                                    <th>Icono</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marquee-list-body">
+                                <!-- Messages will render here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <footer
+                style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 0.875rem; text-align: center;">
+                <p>&copy; 2026 Family Express. Todos los derechos reservados.</p>
+                <p style="margin-top: 0.5rem; opacity: 0.8;">Designed and Powered by Freedom Labs</p>
+            </footer>
+        </main>
+    </div>
+
+    <script type="module">
+        import { db, storage, ref, uploadBytes, getDownloadURL, addDoc, collection, onSnapshot, query, orderBy, deleteDoc, doc, auth, onAuthStateChanged } from '../src/config/firebase-config.js';
+
+        let currentUser = null;
+
+        // --- Auth Check ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('Admin Design: Usuario autenticado', user.email);
+                currentUser = user;
+            } else {
+                console.warn('Admin Design: Usuario NO autenticado');
+                currentUser = null;
+                alert('ATENCIÓN: No estás logueado. No podrás subir banners ni guardar cambios. Por favor ingresa nuevamente desde la página principal.');
+            }
+        });
+
+        // --- Tabs Logic ---
+        window.showSection = (sectionId, btn) => {
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            if (btn) btn.classList.add('active');
+        };
+
+        // --- Upload Logic ---
+        const bannerInput = document.getElementById('banner-upload');
+        const saveBannerBtn = document.querySelector('#banners .btn-primary');
+        const uploadText = document.querySelector('.upload-text');
+        const uploadIcon = document.querySelector('.upload-icon');
+        const uploadHint = document.querySelector('.upload-hint');
+
+        // Create preview element if not exists
+        let previewImg = document.getElementById('banner-preview-img');
+        if (!previewImg) {
+            previewImg = document.createElement('img');
+            previewImg.id = 'banner-preview-img';
+            previewImg.style.maxWidth = '100%';
+            previewImg.style.maxHeight = '300px';
+            previewImg.style.marginTop = '1rem';
+            previewImg.style.borderRadius = '8px';
+            previewImg.style.display = 'none';
+            previewImg.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+            document.querySelector('.upload-area').appendChild(previewImg);
+        }
+
+        // Visual feedback when file is selected
+        bannerInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+
+                // Show text feedback
+                uploadText.textContent = 'Archivo seleccionado: ' + file.name;
+                uploadText.style.color = 'var(--primary)';
+                uploadText.style.fontWeight = 'bold';
+
+                // Show image preview
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    previewImg.src = evt.target.result;
+                    previewImg.style.display = 'block';
+
+                    // Optional: Hide big icon to save space
+                    if (uploadIcon) uploadIcon.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // Reset if cancelled
+                resetUploadUI();
+            }
+        });
+
+        function resetUploadUI() {
+            uploadText.textContent = 'Haz click o arrastra una imagen aquí';
+            uploadText.style.color = '#64748b';
+            uploadText.style.fontWeight = 'normal';
+            if (uploadIcon) uploadIcon.style.display = 'block';
+            if (previewImg) {
+                previewImg.style.display = 'none';
+                previewImg.src = '';
+            }
+        }
+
+        saveBannerBtn.addEventListener('click', async () => {
+            console.log("Botón Guardar clickeado");
+
+            if (!currentUser) {
+                alert('Error de Permisos: Debes iniciar sesión como administrador para subir contenido.');
+                return;
+            }
+
+            const file = bannerInput.files[0];
+            if (!file) {
+                alert('Por favor selecciona una imagen primero.');
+                return;
+            }
+
+            // Get text inputs
+            const inputs = document.querySelectorAll('#banners .input');
+            const title = inputs[0].value;
+            const subtitle = inputs[1].value;
+            const btnText = inputs[2].value;
+            const btnLink = inputs[3].value;
+
+            try {
+                saveBannerBtn.textContent = 'Subiendo... (0%)';
+                saveBannerBtn.disabled = true;
+
+                console.log("Iniciando subida de imagen...");
+
+                // 1. Upload Image
+                const fileName = `banners/${Date.now()}_${file.name}`;
+                const storageRef = ref(storage, fileName);
+
+                // Upload with basic promise
+                const snapshot = await uploadBytes(storageRef, file);
+                console.log('Imagen subida, obteniendo URL...', snapshot);
+
+                saveBannerBtn.textContent = 'Procesando...';
+                const downloadURL = await getDownloadURL(storageRef);
+                console.log('URL obtenida:', downloadURL);
+
+                // 2. Save Metadata to Firestore
+                console.log('Guardando en Firestore...');
+                await addDoc(collection(db, 'banners'), {
+                    imageUrl: downloadURL,
+                    title,
+                    subtitle,
+                    btnText,
+                    btnLink,
+                    createdAt: new Date(),
+                    createdBy: currentUser.email
+                });
+
+                console.log('Guardado exitoso');
+                alert('¡Banner guardado y activo!');
+
+                // Reset form
+                bannerInput.value = '';
+                resetUploadUI();
+                inputs.forEach(i => i.value = '');
+
+            } catch (error) {
+                console.error('Error uploading banner:', error);
+
+                let msg = error.message;
+                if (error.code === 'storage/unauthorized') {
+                    msg = 'Permiso denegado: Verifica las reglas de Storage.';
+                } else if (error.code === 'permission-denied') {
+                    msg = 'Permiso denegado en Base de Datos.';
+                }
+
+                alert('ERROR AL SUBIR: ' + msg);
+            } finally {
+                saveBannerBtn.textContent = 'Guardar Banner';
+                saveBannerBtn.disabled = false;
+            }
+        });
+
+        // --- Load Banners ---
+        const previewGrid = document.querySelector('.preview-grid');
+        const q = query(collection(db, 'banners'), orderBy('createdAt', 'desc'));
+
+        console.log("Escuchando colección banners...");
+        onSnapshot(q, (snapshot) => {
+            console.log(`Snapshot recibido: ${snapshot.size} banners`);
+            previewGrid.innerHTML = '';
+
+            if (snapshot.empty) {
+                previewGrid.innerHTML = '<p style="color: #64748b; grid-column: span 3; text-align: center;">No hay banners activos. Sube uno para empezar.</p>';
+                return;
+            }
+
+            snapshot.forEach(docSnap => {
+                const banner = docSnap.data();
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `
+                    <img src="${banner.imageUrl}" class="preview-img" alt="Banner">
+                    <div class="preview-actions">
+                        <button class="action-btn delete-banner" data-id="${docSnap.id}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <div style="position:absolute; bottom:0; background:rgba(0,0,0,0.5); color:white; width:100%; padding:5px; font-size:0.8rem;">
+                        ${banner.title || 'Sin título'}
+                    </div>
+                `;
+                previewGrid.appendChild(div);
+            });
+
+            // Attach delete listeners
+            document.querySelectorAll('.delete-banner').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.currentTarget.dataset.id;
+                    if (!currentUser) {
+                        alert('Debes estar logueado para eliminar.');
+                        return;
+                    }
+                    if (confirm('¿Seguro quieres eliminar este banner?')) {
+                        try {
+                            await deleteDoc(doc(db, 'banners', id));
+                        } catch (err) {
+                            alert('Error al eliminar: ' + err.message);
+                        }
+                    }
+                });
+            });
+        }, (error) => {
+            console.error("Error obteniendo banners:", error);
+            previewGrid.innerHTML = `<p style="color: red;">Error cargando banners: ${error.message}</p>`;
+        });
+    </script>
+</body>
+
+</html>
+```

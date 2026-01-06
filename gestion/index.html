@@ -11,8 +11,7 @@
     <link rel="stylesheet" href="../styles/styles.css">
 
     <!-- Favicon -->
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+    <link rel="icon" href="../images/favicon.png">
 </head>
 
 <body>
@@ -357,7 +356,16 @@
                     <div class="form-group">
                         <label class="form-label required">Número de Registro Consular</label>
                         <input type="text" id="client-registration" class="form-input">
+                        <p id="new-client-family-hint" class="hidden"
+                            style="color:#0ea5e9; font-size:0.9rem; margin-top:5px; background:#e0f2fe; padding:8px; border-radius:6px;">
+                            ℹ️ Primero <strong>Guarde el Cliente</strong>. El sistema le permitirá agregar a los
+                            familiares inmediatamente después.
+                        </p>
                     </div>
+                </div>
+
+                <div id="client-family-list" class="hidden">
+                    <!-- Populated via JS -->
                 </div>
 
                 <div class="form-group">
@@ -399,6 +407,12 @@
                         <option value="padre/madre">Padre/Madre</option>
                         <option value="esposo/a">Esposo/a</option>
                         <option value="hermano/a">Hermano/a</option>
+                        <option value="tio/a">Tío/a</option>
+                        <option value="primo/a">Primo/a</option>
+                        <option value="sobrino/a">Sobrino/a</option>
+                        <option value="cunado/a">Cuñado/a</option>
+                        <option value="nieto/a">Nieto/a</option>
+                        <option value="abuelo/a">Abuelo/a</option>
                         <option value="otro">Otro</option>
                     </select>
                 </div>
@@ -406,6 +420,17 @@
                 <div class="form-group">
                     <label class="form-label required">Cédula Ecuatoriana</label>
                     <input type="text" id="fm-cedula" class="form-input" required>
+                </div>
+
+                <div class="form-group" style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label class="form-label">Foto Cédula (Frente)</label>
+                        <input type="file" id="fm-photo-front" class="form-input" accept="image/*">
+                    </div>
+                    <div style="flex:1;">
+                        <label class="form-label">Foto Cédula (Reverso)</label>
+                        <input type="file" id="fm-photo-back" class="form-input" accept="image/*">
+                    </div>
                 </div>
 
                 <div class="form-group">

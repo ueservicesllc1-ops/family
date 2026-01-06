@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nosotros | Family Express</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/landing.css">
+    <link rel="stylesheet" href="styles/chat.css">
+
+    <link rel="icon" href="images/favicon.png">
+    <style>
+        .about-section {
+            padding: 120px 0 80px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .about-content {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #475569;
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+
+        .contact-highlight {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .phone-highlight {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <!-- Header -->
+    <header class="glass-nav">
+        <div class="container nav-container">
+            <div class="logo">
+                <a href="index.html" class="logo-image-link">
+                    <img src="images/logo.png" alt="Family Express" class="logo-img">
+                </a>
+            </div>
+
+            <nav class="desktop-nav">
+                <a href="index.html#servicios">Servicios</a>
+                <a href="index.html#tarifas">Tarifas</a>
+                <a href="nosotros.html" class="active">Nosotros</a>
+                <a href="index.html#contacto">Contacto</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="index.html" class="btn btn-primary">Volver al Inicio</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-content" data-aos="fade-up">
+                <h1 class="about-title">Nuestra Historia</h1>
+
+                <p class="about-text">
+                    <strong>Family Express</strong> es una empresa que funciona desde el <strong>2018</strong>, enviando
+                    paquetería desde <strong>New Jersey, USA</strong> hacia <strong>Ecuador</strong>.
+                </p>
+                <p class="about-text">
+                    Nuestro nombre nace porque somos una familia que, al llegar a este país, decidimos emprender con
+                    este negocio de paquetería. Hoy en día, trabajamos juntos, en familia, para servirles de la mejor
+                    manera, conectando a sus seres queridos a través de cada envío.
+                </p>
+                <p class="about-text">
+                    Entendemos el valor emocional de cada paquete y nos comprometemos a entregarlo con la seguridad y
+                    rapidez que ustedes merecen.
+                </p>
+
+                <div class="contact-highlight">
+                    <p>¿Dudas? Contáctanos directamente:</p>
+                    <span class="phone-highlight"><i class="fa-brands fa-whatsapp"></i> +1 (551) 301-4573</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="modern-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">Family<span class="text-gradient">Express</span></div>
+                    <p>Conectando familias y negocios a través de las fronteras con seguridad y rapidez.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="index.html#servicios">Servicios</a></li>
+                        <li><a href="index.html#tarifas">Tarifas</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="terms.html">Términos y Condiciones</a></li>
+                        <li><a href="privacy.html">Política de Privacidad</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contacto</h4>
+                    <ul>
+                        <li><i class="fa-brands fa-whatsapp"></i> +1 (551) 301-4573</li>
+                        <li><i class="fa-solid fa-envelope"></i> info@familyexpress.com</li>
+                        <li><i class="fa-solid fa-location-dot"></i> New Jersey, USA</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Family Express. Todos los derechos reservados. <span
+                        style="margin-left:8px; opacity:0.8;">Designed and Powered by Freedom Labs</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+
+</html>

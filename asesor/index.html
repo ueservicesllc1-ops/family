@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Asesor - Family Express</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0C4E9B;
+            --bg: #f1f5f9;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .layout {
+            display: flex;
+            height: 100%;
+        }
+
+        /* Check List */
+        .chat-list {
+            width: 300px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-list-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: var(--primary);
+            color: white;
+        }
+
+        .chat-list-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: 0.2s;
+            min-height: 72px;
+            /* Ensure consistency */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .chat-item:hover {
+            background: #f8fafc;
+        }
+
+        .chat-item.active {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary);
+        }
+
+        .chat-item.unread {
+            font-weight: bold;
+            background: #fff7ed;
+        }
+
+        .c-name {
+            font-size: 1rem;
+            color: #1e293b;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .c-preview {
+            font-size: 0.85rem;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .c-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+
+        .chat-header-main {
+            padding: 15px 25px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .current-user-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .messages-display {
+            flex: 1;
+            padding: 25px;
+            background: #f8fafc;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Messages */
+        .msg-bubble {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+            margin-bottom: 5px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .msg-bubble.customer {
+            align-self: flex-start;
+            /* LEft */
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+            border-bottom-left-radius: 2px;
+            margin-right: auto;
+            /* Force Left */
+        }
+
+        .msg-bubble.advisor {
+            align-self: flex-end;
+            /* Right */
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 2px;
+            margin-left: auto;
+            /* Force Right */
+        }
+
+        .msg-label {
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+            font-weight: 700;
+            opacity: 1;
+        }
+
+        .msg-bubble.customer .msg-label {
+            color: #64748b;
+            /* Gray label for white bubble */
+        }
+
+        .msg-bubble.advisor .msg-label {
+            color: #e0e7ff;
+            /* Light blue label for blue bubble */
+        }
+
+
+        .input-zone {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            /* Ensure vertical alignment */
+        }
+
+        .msg-input {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .send-btn {
+            padding: 0 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+            /* Prevent text wrapping */
+            height: 50px;
+            /* Match input height roughly */
+        }
+
+        .send-btn:hover {
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            flex-direction: column;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #cbd5e1;
+        }
+
+        /* ... existing styles ... */
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: #1e293b;
+        }
+
+        .history-item {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <style>
+        /* ... existing styles ... */
+        .advisor-header {
+            height: 60px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            gap: 1rem;
+        }
+
+        .advisor-nav-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .advisor-nav-btn:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .advisor-nav-btn.active {
+            background: #eff6ff;
+            color: var(--primary);
+        }
+
+        .layout {
+            display: flex;
+            height: calc(100vh - 60px);
+            /* Adjust for header */
+        }
+
+        .view-section {
+            display: none;
+            height: calc(100vh - 60px);
+            width: 100%;
+        }
+
+        .view-section.active {
+            display: flex;
+        }
+    </style>
+    </head>
+
+    <body>
+
+        <!-- Top Navigation -->
+        <header class="advisor-header">
+            <div style="font-weight:800; color:var(--primary); font-size:1.2rem; margin-right:2rem;">
+                <i class="fa-solid fa-user-tie"></i> Panel Asesor
+            </div>
+
+            <button class="advisor-nav-btn active" onclick="switchView('chat')">
+                <i class="fa-solid fa-comments"></i> Chat
+            </button>
+
+            <button class="advisor-nav-btn" onclick="switchView('tracking')">
+                <i class="fa-solid fa-plane-departure"></i> Rastreo
+            </button>
+
+            <button class="advisor-nav-btn" onclick="switchView('clients')">
+                <i class="fa-solid fa-users"></i> Datos Clientes
+            </button>
+        </header>
+
+        <!-- View: Chat (Default) -->
+        <div id="view-chat" class="view-section active layout">
+            <div class="chat-list">
+                <div class="chat-list-header">
+                    <h2 style="margin:0;"><i class="fa-solid fa-headset"></i> Chats</h2>
+                    <small>Conversaciones Activas</small>
+                </div>
+                <div class="chat-list-content" id="chats-container">
+                    <!-- Items injected here -->
+                </div>
+            </div>
+
+            <div class="chat-area">
+                <div class="empty-state" id="empty-state">
+                    <i class="fa-regular fa-comments"></i>
+                    <h3>Selecciona un chat para comenzar</h3>
+                </div>
+
+                <div id="active-chat-ui" style="display:none; flex:1; flex-direction:column;">
+                    <div class="chat-header-main">
+                        <div class="current-user-name" id="chat-customer-name">Cliente</div>
+                        <button onclick="deleteCurrentChat()"
+                            style="color:red; background:none; border:none; cursor:pointer;">
+                            <i class="fa-solid fa-trash"></i> Finalizar Chat
+                        </button>
+                    </div>
+
+                    <div class="messages-display" id="messages-display">
+                        <!-- Messages -->
+                    </div>
+
+                    <div class="input-zone">
+                        <input type="text" class="msg-input" id="advisor-input" placeholder="Escribe tu respuesta...">
+                        <button class="send-btn" id="advisor-send">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Tracking Placeholder -->
+        <div id="view-tracking" class="view-section" style="padding: 2rem; flex-direction: column; overflow-y: auto;">
+            <h1 style="color: #1e293b;">Rastreo de Paquetes</h1>
+            <p style="color: #64748b;">Herramienta rápida para verificar estado de envíos.</p>
+
+            <div
+                style="background:white; padding:2rem; border-radius:12px; max-width:600px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
+                <label style="display:block; font-weight:600; margin-bottom:0.5rem;">Número de Guía / Tracking</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" class="msg-input" placeholder="Ej: MIA-12345-678">
+                    <button class="send-btn" style="height:auto;">Buscar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Clients Placeholder -->
+        <div id="view-clients" class="view-section" style="padding: 2rem; flex-direction: column; overflow-y: auto;">
+            <h1 style="color: #1e293b;">Base de Datos de Clientes</h1>
+            <p style="color: #64748b;">Gestión y consulta de información de usuarios.</p>
+
+            <div
+                style="background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead style="background:#f8fafc; text-align:left;">
+                        <tr>
+                            <th style="padding:1rem; border-bottom:1px solid #e2e8f0;">Nombre</th>
+                            <th style="padding:1rem; border-bottom:1px solid #e2e8f0;">Email</th>
+                            <th style="padding:1rem; border-bottom:1px solid #e2e8f0;">Teléfono</th>
+                            <th style="padding:1rem; border-bottom:1px solid #e2e8f0;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clients-table-body">
+                        <!-- Javascript will populate this -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script>
+            function switchView(viewName) {
+                // Hide all
+                document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.advisor-nav-btn').forEach(btn => btn.classList.remove('active'));
+
+                // Show selected
+                document.getElementById('view-' + viewName).classList.add('active');
+
+                // Highlight button (simple lookup based on onclick content or order would work, but let's just loop)
+                const buttons = document.querySelectorAll('.advisor-nav-btn');
+                if (viewName === 'chat') buttons[0].classList.add('active');
+                if (viewName === 'tracking') buttons[1].classList.add('active');
+                if (viewName === 'clients') buttons[2].classList.add('active');
+            }
+        </script>
+        <!-- Modals -->
+        <div id="modal-details" class="modal-overlay">
+            <div class="modal-content">
+                <button class="close-modal" onclick="closeModal('details')"><i class="fa-solid fa-xmark"></i></button>
+                <h2 style="margin-top:0; color:var(--primary);">Detalles del Cliente</h2>
+                <div id="details-content"></div>
+                <h3 style="font-size:1.1rem; margin-top:20px;">Familiares Registrados</h3>
+                <div id="family-list" style="background:#f8fafc; padding:15px; border-radius:8px;"></div>
+            </div>
+        </div>
+
+        <div id="modal-history" class="modal-overlay">
+            <div class="modal-content" style="max-width:800px;">
+                <button class="close-modal" onclick="closeModal('history')"><i class="fa-solid fa-xmark"></i></button>
+                <h2 style="margin-top:0; color:var(--primary);">Historial de Envíos</h2>
+                <div id="history-content"></div>
+            </div>
+        </div>
+
+        <script>
+            window.closeModal = function (type) {
+                document.getElementById('modal-' + type).style.display = 'none';
+            }
+        </script>
+        <script type="module" src="../src/modules/chat-advisor.js"></script>
+        <script type="module" src="../src/modules/client-advisor.js"></script>
+    </body>
+
+</html>

@@ -1,0 +1,41 @@
+/* Marquee Strip Styles */
+.marquee-strip {
+    background: var(--blue-dark);
+    /* Using dark blue as requested "franja azul larga" - or I can use primary. var(--primary) is lighter blue. var(--blue-dark) is darker */
+    color: white;
+    width: 100%;
+    padding: 12px 0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
+    margin-top: 10px;
+}
+
+.marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+    padding-left: 100%;
+    /* Start off-screen */
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.marquee-content i {
+    color: var(--warning, #f59e0b);
+    margin: 0 10px;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(-100%, 0);
+    }
+}
+
+/* Ensure container allows full width for strip if needed, but it's outside container in HTML so it is full width */

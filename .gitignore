@@ -8,3 +8,5 @@ build/
 package-lock.json
 .firebase/
 .vscode/
+
+RAILWAY_VARIABLES.env

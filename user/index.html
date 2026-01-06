@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Casillero - Family Express</title>
     <link rel="stylesheet" href="../styles/styles.css">
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+    <link rel="stylesheet" href="../styles/chat.css">
+    <link rel="icon" href="../images/favicon.png">
     <style>
         /* User Dashboard Specific Styles */
         :root {
@@ -205,6 +205,15 @@
 
                     <div
                         style="margin-top: auto; border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-bottom: 0.5rem;">
+                        <button class="nav-link" onclick="window.toggleChat && window.toggleChat()"
+                            style="width: 100%; border: none; background: #e0f2fe; color: #0284c7; cursor: pointer; margin-bottom: 2rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            <span>Contacta al Asesor</span>
+                        </button>
+
                         <a href="/" class="nav-link" style="color: #64748b;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -235,18 +244,18 @@
                     <h1 class="text-2xl font-bold mb-3">Mi Casillero Virtual</h1>
 
                     <div class="card">
-                        <h3 class="text-lg font-semibold mb-2">Dirección en Miami</h3>
+                        <h3 class="text-lg font-semibold mb-2">Dirección en New Jersey</h3>
                         <p class="text-muted mb-3">Usa esta dirección para tus compras en Amazon, eBay, Shein, etc.</p>
 
                         <div class="address-box">
                             <div class="address-line">Name: <span id="addr-name">TU NOMBRE</span></div>
-                            <div class="address-line">Address 1: 1350 NW 121st Ave</div>
+                            <div class="address-line">Address 1: 270 E 19th St</div>
                             <div class="address-line">Address 2: <strong style="color: #0284c7;" id="addr-suite">Suite
                                     FE-XXXXX</strong></div>
-                            <div class="address-line">City: Miami</div>
-                            <div class="address-line">State: FL</div>
-                            <div class="address-line">Zip Code: 33182</div>
-                            <div class="address-line">Phone: +1 (305) 123-4567</div>
+                            <div class="address-line">City: Paterson</div>
+                            <div class="address-line">State: NJ</div>
+                            <div class="address-line">Zip Code: 07524</div>
+                            <div class="address-line">Phone: +1 (551) 301-4573</div>
                         </div>
 
                         <div class="mt-3 p-3 bg-blue-50 text-blue-800 rounded text-sm"
@@ -402,11 +411,19 @@
                     </div>
                 </div>
 
+                <footer
+                    style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 0.875rem; text-align: center;">
+                    <p>&copy; 2026 Family Express. Todos los derechos reservados.</p>
+                    <p style="margin-top: 0.5rem; opacity: 0.8;">Designed and Powered by Freedom Labs</p>
+                </footer>
             </main>
         </div>
 
         <!-- Logic -->
         <script type="module" src="../src/user-dashboard.js"></script>
+
+        <!-- Chat Logic -->
+        <script type="module" src="../src/modules/chat-client.js"></script>
 
         <script>
             // Simple tab switching

@@ -67,10 +67,10 @@ function updateUI(data) {
 
     // Suite ID logic
     const suite = data.suiteId || 'PENDING';
-    sidebarSuite.textContent = `Suite: ${suite}`;
+    if (sidebarSuite) sidebarSuite.textContent = `Suite: ${suite}`;
 
-    addrName.textContent = (data.fullName || 'TU NOMBRE').toUpperCase();
-    addrSuite.innerHTML = `Suite: <strong style="color: #0284c7;">${suite}</strong>`;
+    if (addrName) addrName.textContent = (data.fullName || 'TU NOMBRE').toUpperCase();
+    if (addrSuite) addrSuite.innerHTML = `Suite: <strong style="color: #0284c7;">${suite}</strong>`;
 }
 
 function populateProfileForm(data) {

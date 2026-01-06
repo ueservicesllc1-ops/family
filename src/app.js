@@ -357,7 +357,7 @@ function renderClientsTable(clients) {
       <td>
         <button class="btn btn-sm btn-secondary" onclick="viewClientShipments('${client.id}')">Ver Envíos</button>
         <button class="btn btn-sm btn-secondary" onclick="editClient('${client.id}')">Editar</button>
-        ${client.category === 'G' ? `<button class="btn btn-sm btn-success" onclick="manageFamilyMembers('${client.id}')">👨‍👩‍👧 Familiares</button>` : ''}
+        ${client.category === 'G' ? `<button class="btn btn-sm btn-success" onclick="openFamilyMemberModal('${client.id}')" style="margin-left:5px;">👨‍👩‍👧 Agregar Familiares</button>` : ''}
       </td>
     </tr>
   `).join('');
@@ -369,21 +369,7 @@ function handleClientSearch(e) {
     renderClientsTable(clients);
 }
 
-function openClientModal(clientId = null) {
-    currentClientId = clientId;
-    const modal = document.getElementById('client-modal');
-    const title = document.getElementById('client-modal-title');
-
-    if (clientId) {
-        title.textContent = 'Editar Cliente';
-        loadClientData(clientId);
-    } else {
-        title.textContent = 'Nuevo Cliente';
-        document.getElementById('client-form').reset();
-    }
-
-    modal.classList.add('active');
-}
+// function openClientModal moved below
 
 async function loadClientData(clientId) {
     try {
@@ -399,6 +385,47 @@ async function loadClientData(clientId) {
 
             if (client.category === 'G') {
                 document.getElementById('consular-section').classList.remove('hidden');
+
+                // Show family members logic
+                const container = document.getElementById('client-family-list');
+                if (container) {
+                    const members = client.consularRegistration?.familyMembers || [];
+                    let html = '<label class="form-label" style="margin-top:15px; display:block;">Familiares Registrados</label>';
+
+                    if (members.length === 0) {
+                        html += '<p style="color:#64748b; font-size:0.9rem; margin-bottom:10px;">No hay familiares registrados.</p>';
+                    } else {
+                        html += '<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; margin-bottom:10px;">';
+                        members.forEach(fm => {
+                            html += `
+                                <div style="padding:10px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+                                    <div>
+                                        <strong>${fm.name}</strong> <small>(${fm.relationship})</small><br>
+                                        <small style="color:#64748b;">ID: ${fm.ecuadorianId}</small>
+                                        ${fm.photoUrlFront ? `<br><a href="${fm.photoUrlFront}" target="_blank" style="font-size:0.8rem; color:#0ea5e9;">📷 Cédula (Frente)</a>` : ''}
+                                        ${fm.photoUrlBack ? `<span style="margin:0 5px; color:#cbd5e1;">|</span><a href="${fm.photoUrlBack}" target="_blank" style="font-size:0.8rem; color:#0ea5e9;">📷 Cédula (Atrás)</a>` : ''}
+                                        ${(!fm.photoUrlFront && fm.photoUrl) ? `<br><a href="${fm.photoUrl}" target="_blank" style="font-size:0.8rem; color:#0ea5e9;">📷 Ver Cédula</a>` : ''}
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteFamilyMember('${client.id}', '${fm.id}')" style="padding:2px 8px; font-size:0.8rem;">🗑️</button>
+                                </div>
+                             `;
+                        });
+                        html += '</div>';
+                    }
+
+                    html += `
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="openFamilyMemberModal('${client.id}')" style="width:100%; border:1px dashed #cbd5e1;">
+                            + Agregar Familiar
+                        </button>
+                     `;
+
+                    container.innerHTML = html;
+                    container.classList.remove('hidden');
+                }
+            } else {
+                if (document.getElementById('client-family-list')) {
+                    document.getElementById('client-family-list').classList.add('hidden');
+                }
             }
         }
     } catch (error) {
@@ -468,11 +495,46 @@ async function handleClientSubmit(e) {
 
 function handleCategoryChange(e) {
     const consularSection = document.getElementById('consular-section');
+    const hint = document.getElementById('new-client-family-hint');
+
     if (e.target.value === 'G') {
         consularSection.classList.remove('hidden');
+        // Show hint only if it's a new client
+        if (!currentClientId && hint) {
+            hint.classList.remove('hidden');
+        } else if (hint) {
+            hint.classList.add('hidden');
+        }
     } else {
         consularSection.classList.add('hidden');
+        if (hint) hint.classList.add('hidden');
     }
+}
+
+// Make sure to reset state when opening modal
+function openClientModal(clientId = null) {
+    currentClientId = clientId;
+    const modal = document.getElementById('client-modal');
+    const title = document.getElementById('client-modal-title');
+    const hint = document.getElementById('new-client-family-hint');
+    const familyList = document.getElementById('client-family-list');
+
+    // Reset UI
+    if (hint) hint.classList.add('hidden');
+    if (familyList) familyList.classList.add('hidden');
+    document.getElementById('consular-section').classList.add('hidden');
+
+    if (clientId) {
+        title.textContent = 'Editar Cliente';
+        loadClientData(clientId);
+    } else {
+        title.textContent = 'Nuevo Cliente';
+        document.getElementById('client-form').reset();
+        // Reset category radios to B default
+        document.querySelector('input[name="client-category"][value="B"]').checked = true;
+    }
+
+    modal.classList.add('active');
 }
 
 // Family Members Management
@@ -504,7 +566,15 @@ async function handleFamilyMemberSubmit(e) {
             return;
         }
 
-        await clientManager.addFamilyMember(currentClientId, familyMemberData);
+        const photoFileFront = document.getElementById('fm-photo-front').files[0];
+        const photoFileBack = document.getElementById('fm-photo-back').files[0];
+
+        const photos = {
+            front: photoFileFront,
+            back: photoFileBack
+        };
+
+        await clientManager.addFamilyMember(currentClientId, familyMemberData, photos);
         showNotification('✅ Familiar agregado exitosamente', 'success');
 
         document.getElementById('family-member-form').reset();
@@ -513,6 +583,8 @@ async function handleFamilyMemberSubmit(e) {
         setTimeout(() => {
             if (!confirm('¿Desea agregar otro familiar?')) {
                 closeModal('family-member-modal');
+                // Re-open client modal to see update
+                openClientModal(currentClientId);
             }
         }, 500);
 
@@ -647,6 +719,25 @@ async function loadRecipients() {
 
 // Make global for inline onchange
 window.toggleRecipientInput = toggleRecipientInput;
+
+// New Helper for Family Members
+window.openFamilyMemberModal = (clientId) => {
+    currentClientId = clientId;
+    closeModal('client-modal');
+    document.getElementById('family-member-modal').classList.add('active');
+};
+
+window.deleteFamilyMember = async (clientId, fmId) => {
+    if (!confirm('¿Seguro que desea eliminar a este familiar?')) return;
+
+    try {
+        await clientManager.removeFamilyMember(clientId, fmId);
+        // Refresh client modal
+        loadClientData(clientId);
+    } catch (e) {
+        alert('Error: ' + e.message);
+    }
+};
 
 function toggleRecipientInput() {
     const manual = document.getElementById('use-manual-recipient').checked;

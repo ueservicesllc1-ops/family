@@ -20,9 +20,10 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="styles/landing.css">
+  <link rel="stylesheet" href="styles/marquee.css">
+  <link rel="stylesheet" href="styles/chat.css">
 
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <link rel="icon" href="images/favicon.png">
 </head>
 
 <body>
@@ -44,54 +45,70 @@
       <nav class="desktop-nav">
         <a href="#servicios">Servicios</a>
         <a href="#tarifas">Tarifas</a>
-        <a href="#nosotros">Nosotros</a>
+        <a href="nosotros.html">Nosotros</a>
         <a href="#contacto">Contacto</a>
       </nav>
 
       <div class="nav-actions">
-        <button onclick="openAuthModal()" class="btn btn-outline">
-          <i class="fa-regular fa-user"></i> Ingresar
-        </button>
-        <div id="user-menu" class="hidden">
-          <a href="/user/" class="btn btn-primary">Mi Casillero</a>
+        <!-- ... (existing auth buttons) ... -->
+        <!-- skipping lines for brevity in search match, targeting nav primarily -->
+
+        <!-- Footer Update -->
+        <!-- I'll do this in two chunks or one large block if possible. Let's try two separate edits if too far apart. Ah, the tool doesn't support multiple disjoint edits in one call unless I read the whole file. -->
+        <!-- I will target the nav first. -->
+
+        <div class="nav-actions">
+          <button id="auth-buttons" onclick="openAuthModal()" class="btn btn-outline">
+            <i class="fa-regular fa-user"></i> Ingresar
+          </button>
+          <div id="user-menu" class="hidden header-user-group">
+            <div class="user-mini-profile">
+              <img id="header-avatar" src="https://ui-avatars.com/api/?name=User" class="header-avatar-img">
+              <span id="header-username" class="header-username-text">Usuario</span>
+            </div>
+            <div class="header-actions-divider"></div>
+            <a href="/user/" class="header-icon-btn" title="Mi Casillero">
+              <i class="fa-solid fa-box-open"></i>
+            </a>
+            <button onclick="logoutApp()" class="header-icon-btn logout-btn" title="Cerrar Sesión">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
+
+          <!-- Admin Icons (Far Right, Hidden by default) -->
+          <a href="#" id="admin-link-gestion" class="admin-icon-link hidden" title="Gestión Agencia"
+            onclick="requestPin('/gestion/'); return false;">
+            <i class="fa-solid fa-shield-halved"></i>
+          </a>
+          <a href="#" id="admin-link-design" class="admin-icon-link hidden" title="Diseño Web"
+            onclick="requestPin('/admin/design.html'); return false;">
+            <i class="fa-solid fa-shapes"></i>
+          </a>
         </div>
       </div>
-    </div>
   </header>
 
   <!-- Hero Carousel -->
   <section class="hero-carousel">
     <div class="carousel-container">
-      <!-- Slide 1 -->
-      <div class="carousel-slide active"
-        style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1920&q=80');">
-        <div class="container slide-content">
-          <h1 data-aos="fade-up">Envíos de USA a Ecuador</h1>
-          <p data-aos="fade-up" data-aos-delay="100">La forma más segura y rápida de recibir tus compras.</p>
-          <a href="#tarifa4x4" class="btn btn-primary" data-aos="fade-up" data-aos-delay="200">Ver Tarifas</a>
-        </div>
-      </div>
-      <!-- Slide 2 -->
-      <div class="carousel-slide"
-        style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1566576912906-253c7235a901?auto=format&fit=crop&w=1920&q=80');">
-        <div class="container slide-content">
-          <h1>Casillero Gratuito</h1>
-          <p>Compra en tus tiendas favoritas, nosotros lo llevamos a tu puerta.</p>
-          <button onclick="openAuthModal()" class="btn btn-primary">Registrarse Gratis</button>
-        </div>
-      </div>
 
       <!-- Controls -->
       <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
       <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
 
       <!-- Indicators -->
-      <div class="carousel-dots">
-        <span class="dot active" onclick="currentSlide(0)"></span>
-        <span class="dot" onclick="currentSlide(1)"></span>
-      </div>
+      <div class="carousel-dots"></div>
+
     </div>
   </section>
+
+  <!-- Marquee Strip -->
+  <div class="marquee-strip">
+    <div class="marquee-content">
+      <i class="fa-solid fa-bullhorn"></i> Para programar la recogida de tu paquete escribir en el chat en la esquina
+      inferior derecha <i class="fa-solid fa-comment-dots"></i>
+    </div>
+  </div>
 
   <!-- Simple Services Cards -->
   <section id="servicios" class="section services-simple">
@@ -165,7 +182,7 @@
             <li><i class="fa-solid fa-check"></i> Entrega a domicilio</li>
             <li><i class="fa-solid fa-check"></i> Sin impuestos adicionales*</li>
           </ul>
-          <button class="btn btn-primary full-width" onclick="openAuthModal()">Empezar</button>
+          <button class="btn btn-primary full-width" onclick="handleStartAction()">Empezar</button>
         </div>
 
         <div class="pricing-card featured" data-aos="flip-right">
@@ -183,9 +200,28 @@
             <li><i class="fa-solid fa-check"></i> Peso ilimitado</li>
             <li><i class="fa-solid fa-check"></i> Ideal para ropa y zapatos</li>
             <li><i class="fa-solid fa-check"></i> Asesoría aduanera</li>
-            <li><i class="fa-solid fa-info-circle"></i> Requiere impuestos</li>
+            <li><i class="fa-solid fa-check"></i> Impuesto de $20</li>
           </ul>
-          <button class="btn btn-outline full-width">Cotizar Carga</button>
+          <button class="btn btn-outline full-width" onclick="handleStartAction()">Cotizar Carga</button>
+        </div>
+
+        <div class="pricing-card" data-aos="flip-left">
+          <div class="card-glow"></div>
+          <div class="pricing-header">
+            <h3>Categoría G</h3>
+            <p>Registro Familiar</p>
+          </div>
+          <div class="pricing-price">
+            <span class="currency">$</span>4<span class="period">.50</span>
+            <span class="unit">/ libra</span>
+          </div>
+          <ul class="pricing-features">
+            <li><i class="fa-solid fa-check"></i> Sin impuestos</li>
+            <li><i class="fa-solid fa-check"></i> Reg. Consular Requerido</li>
+            <li><i class="fa-solid fa-check"></i> Envíos Familiares</li>
+            <li><i class="fa-solid fa-check"></i> 1 Paquete por familiar</li>
+          </ul>
+          <button class="btn btn-outline full-width" onclick="handleStartAction()">Cotizar</button>
         </div>
       </div>
     </div>
@@ -218,67 +254,212 @@
         <div class="footer-col">
           <h4>Contacto</h4>
           <ul>
-            <li><i class="fa-brands fa-whatsapp"></i> +1 (305) 555-0123</li>
+            <li><i class="fa-brands fa-whatsapp"></i> +1 (551) 301-4573</li>
             <li><i class="fa-solid fa-envelope"></i> info@familyexpress.com</li>
-            <li><i class="fa-solid fa-location-dot"></i> Miami, FL 33182</li>
+            <li><i class="fa-solid fa-location-dot"></i> New Jersey, USA</li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 Family Express. Todos los derechos reservados.</p>
+        <p>&copy; 2026 Family Express. Todos los derechos reservados. <span
+            style="margin-left:8px; opacity:0.8;">Designed and Powered by Freedom Labs</span></p>
       </div>
     </div>
   </footer>
 
   <!-- Auth Modal (Preserved Functionality) -->
+  <!-- Modern Auth Modal -->
   <div id="auth-modal" class="modal">
-    <div class="modal-content glass-modal" style="max-width: 400px;">
-      <div class="modal-header">
+    <div class="modal-backdrop" onclick="closeModal('auth-modal')"></div>
+    <div class="modal-content glass-modal animate-modal">
+      <button class="modal-close-btn" onclick="closeModal('auth-modal')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="modal-header-center">
+        <div class="modal-icon-brand">
+          <i class="fa-solid fa-user-circle"></i>
+        </div>
         <h3 class="modal-title" id="auth-title">Bienvenido</h3>
-        <button class="modal-close" onclick="closeModal('auth-modal')">✕</button>
+        <p class="modal-subtitle">Accede a tu casillero y gestiona tus envíos</p>
       </div>
 
-      <div class="auth-tabs">
-        <button class="tab-btn active" onclick="switchAuthTab('login')">Ingresar</button>
-        <button class="tab-btn" onclick="switchAuthTab('register')">Registrarse</button>
+      <div class="auth-tabs-wrapper">
+        <div class="auth-tabs">
+          <button class="tab-btn active" onclick="switchAuthTab('login')" id="tab-login">
+            Ingresar
+          </button>
+          <button class="tab-btn" onclick="switchAuthTab('register')" id="tab-register">
+            Registrarse
+          </button>
+        </div>
       </div>
 
       <!-- Login Form -->
-      <form id="login-form">
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" id="login-email" class="form-input" required>
+      <form id="login-form" class="auth-form active">
+        <div class="input-group">
+          <label class="input-label">Correo Electrónico</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-envelope input-icon"></i>
+            <input type="email" id="login-email" class="modern-input" placeholder="ejemplo@correo.com" required>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input type="password" id="login-password" class="form-input" required>
+        <div class="input-group">
+          <div class="flex-between">
+            <label class="input-label">Contraseña</label>
+            <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+          </div>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="login-password" class="modern-input" placeholder="••••••••" required>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary full-width">Iniciar Sesión</button>
+        <button type="submit" class="btn btn-primary full-width btn-lg">
+          Iniciar Sesión <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        </button>
       </form>
 
       <!-- Register Form -->
-      <form id="register-form" class="hidden">
-        <div class="form-group">
-          <label class="form-label">Nombre Completo</label>
-          <input type="text" id="reg-name" class="form-input" required>
+      <form id="register-form" class="auth-form hidden">
+        <div class="input-group">
+          <label class="input-label">Nombre Completo</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-user input-icon"></i>
+            <input type="text" id="reg-name" class="modern-input" placeholder="Tu nombre" required>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" id="reg-email" class="form-input" required>
+        <div class="input-group">
+          <label class="input-label">Correo Electrónico</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-envelope input-icon"></i>
+            <input type="email" id="reg-email" class="modern-input" placeholder="ejemplo@correo.com" required>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input type="password" id="reg-password" class="form-input" required>
+        <div class="input-group">
+          <label class="input-label">Contraseña</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="reg-password" class="modern-input" placeholder="Crea una contraseña segura"
+              required>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary full-width">Crear Cuenta</button>
+        <button type="submit" class="btn btn-primary full-width btn-lg">
+          Crear Cuenta Gratuita
+        </button>
       </form>
 
       <div class="auth-divider">
         <span>O continúa con</span>
       </div>
 
-      <button id="auth-google-btn" class="btn btn-social">
-        <i class="fa-brands fa-google"></i> Google
+      <button id="auth-google-btn" class="btn-social-google">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="google-icon">
+        <span>Continuar con Google</span>
+      </button>
+
+      <p class="terms-micro">
+        Al continuar, aceptas nuestros <a href="terms.html">Términos</a> y <a href="privacy.html">Política de
+          Privacidad</a>.
+      </p>
+    </div>
+  </div>
+
+  <!-- PIN Verification Modal -->
+  <div id="pin-modal" class="modal">
+    <div class="modal-backdrop" onclick="closeModal('pin-modal')"></div>
+    <div class="modal-content glass-modal animate-modal" style="max-width: 360px;">
+      <button class="modal-close-btn" onclick="closeModal('pin-modal')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="modal-header-center">
+        <div class="modal-icon-brand" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <h3 class="modal-title">Seguridad</h3>
+        <p class="modal-subtitle">Ingresa tu PIN de administrador</p>
+      </div>
+
+      <form id="pin-form" class="auth-form active">
+        <div class="input-group">
+          <div class="input-wrapper">
+            <i class="fa-key input-icon"></i>
+            <input type="password" id="admin-pin" class="modern-input" placeholder="PIN" maxlength="6" pattern="[0-9]*"
+              inputmode="numeric" required style="text-align: center; letter-spacing: 0.5rem; font-size: 1.5rem;">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary full-width btn-lg">
+          Verificar Acceso
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- How It Works Modal -->
+  <div id="how-it-works-modal" class="modal">
+    <div class="modal-backdrop" onclick="closeModal('how-it-works-modal')"></div>
+    <div class="modal-content glass-modal animate-modal" style="max-width: 600px;">
+      <button class="modal-close-btn" onclick="closeModal('how-it-works-modal')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="modal-header-center">
+        <h3 class="modal-title" style="color: var(--primary);">Así funciona Family Express</h3>
+        <p class="modal-subtitle">Sigue estos pasos simples para empezar a enviar</p>
+      </div>
+
+      <div style="display: grid; gap: 1.5rem; margin: 2rem 0;">
+
+        <div style="display: flex; gap: 1rem; align-items: start;">
+          <div
+            style="background: #eff6ff; color: var(--primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">
+            1</div>
+          <div>
+            <h4 style="margin: 0 0 0.2rem 0; color: #1e293b;">Regístrate Gratis</h4>
+            <p style="margin: 0; font-size: 0.9rem; color: #64748b;">Crea tu cuenta en segundos para acceder a tu panel.
+            </p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: start;">
+          <div
+            style="background: #eff6ff; color: var(--primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">
+            <i class="fa-solid fa-box-open"></i>
+          </div>
+          <div>
+            <h4 style="margin: 0 0 0.2rem 0; color: #1e293b;">Obtén tu Casillero</h4>
+            <p style="margin: 0; font-size: 0.9rem; color: #64748b;">Recibirás una dirección en Miami para hacer tus
+              compras.</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: start;">
+          <div
+            style="background: #eff6ff; color: var(--primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">
+            3</div>
+          <div>
+            <h4 style="margin: 0 0 0.2rem 0; color: #1e293b;">Completa tus Datos</h4>
+            <p style="margin: 0; font-size: 0.9rem; color: #64748b;">Asegúrate de llenar tu información de contacto y
+              entrega.</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: start;">
+          <div
+            style="background: #eff6ff; color: var(--primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">
+            <i class="fa-solid fa-headset"></i>
+          </div>
+          <div>
+            <h4 style="margin: 0 0 0.2rem 0; color: #1e293b;">Habla con un Asesor</h4>
+            <p style="margin: 0; font-size: 0.9rem; color: #64748b;">Escríbenos al chat y te guiaremos personalmente en
+              tu primer envío.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <button onclick="openAuthFromHowTo()" class="btn btn-primary full-width btn-lg">
+        Entendido, ¡Quiero Empezar!
       </button>
     </div>
   </div>
@@ -339,6 +520,7 @@
     }
   </script>
   <script type="module" src="src/client-logic.js"></script>
+  <script type="module" src="src/modules/chat-client.js"></script>
 </body>
 
 </html>

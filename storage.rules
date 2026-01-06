@@ -1,0 +1,18 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Regla general: Solo usuarios autenticados pueden leer/escribir por defecto
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Reglas específicas para Banners
+    // Cualquiera puede verlos (para que salgan en la web), 
+    // pero solo usuarios autenticados pueden subir/borrar.
+    match /banners/{imageId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
