@@ -376,6 +376,10 @@
             <button class="advisor-nav-btn" onclick="switchView('clients')">
                 <i class="fa-solid fa-users"></i> Datos Clientes
             </button>
+
+            <button class="advisor-nav-btn" onclick="switchView('messages')">
+                <i class="fa-solid fa-envelope"></i> Mensajes
+            </button>
         </header>
 
         <!-- View: Chat (Default) -->
@@ -455,6 +459,16 @@
             </div>
         </div>
 
+        <!-- View: Messages (Contact Form) -->
+        <div id="view-messages" class="view-section" style="padding: 2rem; flex-direction: column; overflow-y: auto;">
+            <h1 style="color: #1e293b;">Mensajes de Contacto</h1>
+            <p style="color: #64748b;">Consultas recibidas desde el formulario web.</p>
+
+            <div id="messages-list" style="display: grid; gap: 1rem; max-width: 800px;">
+                <p style="color: #64748b;">Cargando mensajes...</p>
+            </div>
+        </div>
+
         <script>
             function switchView(viewName) {
                 // Hide all
@@ -469,6 +483,7 @@
                 if (viewName === 'chat') buttons[0].classList.add('active');
                 if (viewName === 'tracking') buttons[1].classList.add('active');
                 if (viewName === 'clients') buttons[2].classList.add('active');
+                if (viewName === 'messages') buttons[3].classList.add('active');
             }
         </script>
         <!-- Modals -->

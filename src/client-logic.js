@@ -1,4 +1,4 @@
-import { auth, googleProvider, signInWithPopup, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, db, doc, setDoc, getDoc, query, orderBy, collection, getDocs } from './config/firebase-config.js';
+import { auth, googleProvider, signInWithPopup, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, db, doc, setDoc, getDoc, query, orderBy, collection, getDocs, addDoc, onSnapshot } from './config/firebase-config.js';
 
 // DOM Elements
 const authButtons = document.getElementById('auth-buttons');
@@ -375,4 +375,58 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMarquee();
 });
 loadBanners(); // Call immediately in case DOM is ready (module)
+// --- Contact Form Logic ---
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = contactForm.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+
+        // Get values
+        const name = document.getElementById('contact-name').value;
+        const email = document.getElementById('contact-email').value;
+        const phone = document.getElementById('contact-phone').value;
+        const message = document.getElementById('contact-message').value;
+
+        try {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+
+            // Save to Firestore
+            await addDoc(collection(db, 'contact_messages'), {
+                name,
+                email,
+                phone,
+                message,
+                read: false,
+                createdAt: new Date()
+            });
+
+            // Success feedback
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Enviado!';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-success'); // Ensure you have a success class or style
+            btn.style.backgroundColor = '#10b981'; // Fallback success color
+
+            contactForm.reset();
+
+            // Reset button after 3 seconds
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                btn.classList.add('btn-primary');
+                btn.style.backgroundColor = '';
+            }, 3000);
+
+        } catch (error) {
+            console.error('Error enviando mensaje:', error);
+            alert('Hubo un error al enviar el mensaje. Por favor intenta de nuevo.');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    });
+}
+
+
 loadMarquee();

@@ -1,4 +1,4 @@
-import { db, collection, getDocs } from '../config/firebase-config.js';
+import { db, collection, getDocs, orderBy, query, onSnapshot, doc, updateDoc } from '../config/firebase-config.js';
 import clientManager from './client-manager.js';
 import shipmentManager from './shipment-manager.js';
 
@@ -6,6 +6,7 @@ import shipmentManager from './shipment-manager.js';
 document.addEventListener('DOMContentLoaded', () => {
     // We could defer loading until the tab is clicked, but loading on start is fine for now
     loadClients();
+    initializeMessagesListener();
 });
 
 // Load Clients into Table
@@ -176,3 +177,66 @@ window.viewClientHistory = async (clientId) => {
 
 // Also expose loadClients in case we want to refresh manually
 window.refreshClientList = loadClients;
+
+// --- Messages Logic ---
+function initializeMessagesListener() {
+    const listContainer = document.getElementById('messages-list');
+    if (!listContainer) return;
+
+    const q = query(collection(db, 'contact_messages'), orderBy('createdAt', 'desc'));
+
+    onSnapshot(q, (snapshot) => {
+        if (snapshot.empty) {
+            listContainer.innerHTML = '<p style="color:#64748b; text-align:center;">No hay mensajes nuevos.</p>';
+            return;
+        }
+
+        listContainer.innerHTML = '';
+        snapshot.forEach(docSnap => {
+            const msg = docSnap.data();
+            const id = docSnap.id;
+            const date = msg.createdAt ? new Date(msg.createdAt.seconds * 1000).toLocaleString() : 'N/A';
+            const isUnread = msg.read === false;
+
+            const card = document.createElement('div');
+            card.style.cssText = `
+                background: white; 
+                padding: 1.5rem; 
+                border-radius: 12px; 
+                box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
+                border-left: 5px solid ${isUnread ? '#ef4444' : '#e2e8f0'};
+            `;
+
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                    <strong style="color:#1e293b; font-size:1.1rem;">${msg.name}</strong>
+                    <span style="font-size:0.8rem; color:#94a3b8;">${date}</span>
+                </div>
+                <div style="font-size:0.9rem; color:#64748b; margin-bottom:0.8rem;">
+                    <i class="fa-solid fa-envelope"></i> ${msg.email} &nbsp;|&nbsp; 
+                    <i class="fa-solid fa-phone"></i> ${msg.phone || 'N/A'}
+                </div>
+                <div style="background:#f8fafc; padding:10px; border-radius:8px; color:#334155; margin-bottom:1rem;">
+                    ${msg.message}
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                    ${isUnread ? `
+                    <button onclick="markMessageRead('${id}')" style="border:none; background:none; color:#10b981; cursor:pointer; font-weight:600; font-size:0.9rem;">
+                        <i class="fa-solid fa-check-double"></i> Marcar Leído
+                    </button>` : '<span style="color:#94a3b8; font-size:0.8rem;"><i class="fa-solid fa-check"></i> Leído</span>'}
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+    });
+}
+
+window.markMessageRead = async (id) => {
+    try {
+        await updateDoc(doc(db, 'contact_messages', id), {
+            read: true
+        });
+    } catch (e) {
+        console.error("Error marking read", e);
+    }
+}

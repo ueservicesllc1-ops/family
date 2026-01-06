@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objetos Prohibidos | Family Express</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/landing.css">
+    <link rel="icon" href="images/favicon.png">
+
+    <style>
+        .page-header-simple {
+            background-color: var(--blue-dark);
+            color: white;
+            padding: 120px 0 60px;
+            text-align: center;
+        }
+
+        /* Warning Box Style */
+        .warning-box {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            color: #7f1d1d;
+        }
+
+        .text-content {
+            padding: 60px 0;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+
+        .text-content h2 {
+            color: var(--blue-dark);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .text-content h3 {
+            color: #2d3748;
+            margin-top: 1.5rem;
+            font-weight: 600;
+        }
+
+        .text-content ul {
+            margin-bottom: 1.5rem;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .text-content ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 0.8rem;
+        }
+
+        .text-content ul li::before {
+            content: "\f05e";
+            /* fa-ban */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: #ef4444;
+            /* Red color */
+        }
+
+        .allowed-list li::before {
+            content: "\f058";
+            /* fa-circle-check */
+            color: #10b981;
+            /* Green color */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="glass-nav">
+        <div class="container nav-container">
+            <div class="logo">
+                <a href="index.html" class="logo-image-link">
+                    <img src="images/logo.png" alt="Family Express" class="logo-img">
+                </a>
+            </div>
+
+            <nav class="desktop-nav">
+                <a href="index.html#servicios">Servicios</a>
+                <a href="index.html#tarifas">Tarifas</a>
+                <a href="index.html#contacto">Contacto</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="index.html" class="btn btn-outline">Volver al Inicio</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-header-simple">
+        <div class="container">
+            <h1>Objetos Prohibidos y Restringidos</h1>
+            <p>Evita sorpresas y retrasos en Aduana Ecuador</p>
+        </div>
+    </div>
+
+    <section class="text-content">
+        <div class="container" style="max-width: 800px;">
+            <div class="warning-box">
+                <strong> Importante:</strong> El envío de artículos prohibidos puede resultar en la incautación de la
+                mercancía por parte de la Aduana, multas severas e incluso acciones legales. Por favor revisa esta lista
+                cuidadosamente antes de enviar.
+            </div>
+
+            <p>Para asegurar que tus envíos lleguen sin contratiempos a su destino en Ecuador, es fundamental cumplir
+                con las regulaciones aduaneras vigentes. A continuación, detallamos qué artículos no pueden ser
+                transportados bajo ninguna circunstancia y cuáles requieren permisos especiales.</p>
+
+            <h2><i class="fa-solid fa-ban text-red-500"></i> Prohibidos Absolutamente</h2>
+            <p>Estos artículos <strong>NO</strong> pueden ser enviados por courier bajo ninguna modalidad:</p>
+            <ul>
+                <li>Dinero en efectivo, cheques al portador, tarjetas de débito/crédito activas.</li>
+                <li>Joyas, piedras preciosas y metales preciosos (oro, plata, platino).</li>
+                <li>Armas de fuego, municiones, explosivos, accesorios de armas, miras telescópicas.</li>
+                <li>Armas de juguete que parezcan reales (airsoft, paintball).</li>
+                <li>Drogas, estupefacientes y sustancias psicotrópicas.</li>
+                <li>Material pornográfico.</li>
+                <li>Material inflamable, corrosivo, radiactivo o peligroso (sprays, aerosoles, pinturas, perfumes con
+                    alcohol en grandes cantidades).</li>
+                <li>Animales vivos o muertos, pieles de animales exóticos.</li>
+                <li>Perecederos (comida fresca, frutas, semillas).</li>
+                <li>Repuestos usados de vehículos (está prohibida la importación de repuestos usados).</li>
+            </ul>
+
+            <h2><i class="fa-solid fa-triangle-exclamation text-yellow-500"></i> Artículos con Restricciones (Requieren
+                Permisos)</h2>
+            <p>Se pueden importar pero necesitan documentos previos del INEN, ARCSA, o AGROCALIDAD:</p>
+            <ul style="color: #d97706;">
+                <li>Medicinas (solo permitido con receta médica y para uso personal limitado, o con permiso sanitario).
+                </li>
+                <li>Equipos médicos profesionales.</li>
+                <li>Celulares (solo se permite 1 celular nuevo por año por persona natural bajo categoría 4x4 o pago de
+                    impuestos específicos).</li>
+                <li>Productos químicos industriales.</li>
+            </ul>
+
+            <h2><i class="fa-solid fa-box-open text-blue-500"></i> Reglas Específicas Categoría B (4x4)</h2>
+            <p>Para aprovechar el envío 4x4 ($42 de costo aproximado todo incluido hasta 4kg/8.5lb y $400):</p>
+            <ul>
+                <li>NO puedes enviar celulares en esta categoría.</li>
+                <li>MÁXIMO 3 unidades del mismo tipo de artículo (ej: máximo 3 perfumes, 3 pares de zapatos iguales)
+                    para considerarse uso personal.</li>
+                <li>Ropa y zapatos usados pueden tener restricciones de peso/valor si se considera fin comercial.</li>
+            </ul>
+
+            <h2><i class="fa-solid fa-laptop-medical"></i> Equipos Electrónicos</h2>
+            <h3>Laptops y Tablets</h3>
+            <p>Se permite el envío de una (1) laptop y una (1) tablet nueva como efectos personales bajo ciertas
+                condiciones, pero generalmente pagan impuestos si exceden el 4x4. Consultar con un asesor antes de
+                enviar.</p>
+
+            <h3>Televisores</h3>
+            <p>Pagan impuestos específicos basados en las pulgadas. No entran en categoría 4x4.</p>
+
+            <div class="warning-box" style="background-color: #eff6ff; border-color: #3b82f6; color: #1e3a8a;">
+                <strong>¿Tienes dudas?</strong> No te arriesgues. Si no estás seguro si un artículo puede ser enviado,
+                <a href="index.html#contacto" style="text-decoration: underline; font-weight: bold;">contáctanos por
+                    WhatsApp</a> antes de comprarlo o enviarlo a nuestra bodega.
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="modern-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Family Express. Todos los derechos reservados. <span
+                        style="margin-left:8px; opacity:0.8;">Designed and Powered by Freedom Labs</span></p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

@@ -428,18 +428,32 @@
         <script>
             // Simple tab switching
             window.showSection = (sectionId) => {
-                // Toggle Nav Active
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                // (Active class logic logic mostly needing a specific selector, just roughing it here)
+                // Toggle Nav Active (Simple logic)
+                document.querySelectorAll('.nav-link').forEach(l => {
+                    l.classList.remove('active');
+                    if (l.getAttribute('onclick').includes(sectionId)) {
+                        l.classList.add('active');
+                    }
+                });
 
                 // Hide all sections
                 ['locker', 'profile', 'alerts', 'received'].forEach(id => {
-                    document.getElementById('section-' + id).classList.add('hidden');
+                    const el = document.getElementById('section-' + id);
+                    if (el) el.classList.add('hidden');
                 });
 
                 // Show target
-                document.getElementById('section-' + sectionId).classList.remove('hidden');
+                const target = document.getElementById('section-' + sectionId);
+                if (target) target.classList.remove('hidden');
             }
+
+            // Hash Navigation Support
+            window.addEventListener('load', () => {
+                const hash = window.location.hash.replace('#', '');
+                if (hash && ['locker', 'profile', 'alerts', 'received'].includes(hash)) {
+                    showSection(hash);
+                }
+            });
         </script>
 </body>
 
